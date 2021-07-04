@@ -18,18 +18,21 @@ namespace WeFightAPI
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICharacterRepository, CharacterRepository>();
-            services.AddDbContext<CharacterContext>(o => o.UseSqlite("Data source=characters.db"));
+            // services.AddDbContext<CharacterContext>(o => o.UseSqlite("Data source=characters.db"));
+            services.AddDbContextPool<CharacterContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CharacterDB")));
             services.AddControllers();
         }
 
